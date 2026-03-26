@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lectum — Твоя академическая память</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- === LANDING PAGE === -->
+    <div id="landing-page">
+        <header class="landing-header">
+            <div class="logo">
+                <h1>📚 Lectum.io</h1>
+            </div>
+            <nav>
+                <a href="#features">Возможности</a>
+            </nav>
+            <div class="header-right">
+                <button class="btn btn-outline" id="landing-theme-toggle" onclick="toggleTheme()">🌙</button>
+                <button class="btn" onclick="showAuth('login')">Войти</button>
+                <button class="btn btn-outline" onclick="showAuth('register')">Регистрация</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h1>Учись умнее в 2026 году</h1>
+            <p>Делись конспектами по ссылке, импортируй материалы от одногруппников и храни всё в одном месте.</p>
+            <button class="btn btn-lg" onclick="showAuth('register')">Начать бесплатно</button>
+        </section>
+
+        <section class="features-section" id="features">
+            <h2>Функционал</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon">🔗</div>
+                    <h3>Обмен по ссылке <span class="badge-dev">Популярно</span></h3>
+                    <p>Генерируй уникальные коды предметов и файлов для обмена с одногруппниками.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🌗</div>
+                    <h3>Тёмная тема</h3>
+                    <p>Переключайся между светлой и тёмной темой для комфортной учёбы.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">👤</div>
+                    <h3>Профиль</h3>
+                    <p>Настраивай никнейм, аватарку и следи за активностью.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- === AUTH SCREEN === -->
+    <div id="auth-screen" class="auth-container" style="display: none;">
+        <div class="auth-card">
+            <h2 id="auth-title">Вход</h2>
+            <form id="auth-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-lg">Продолжить</button>
+            </form>
+            <div class="auth-switch">
+                <a href="#" onclick="toggleAuthMode(); return false;" id="auth-toggle-text">
+                    Нет аккаунта? Зарегистрироваться
+                </a>
+                <br><br>
+                <a href="#" onclick="showLanding(); return false;">← На главную</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- === APP SCREEN === -->
+    <div id="app-screen" style="display: none;">
+        <header class="app-header">
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Меню">☰</button>
+            <div class="logo">
+                <h3>📚 Lectum</h3>
+            </div>
+            <nav>
+                <a href="#" class="active">Предметы</a>
+                <a href="#">AI <span class="badge-dev-small">Скоро</span></a>
+            </nav>
+            <div class="user-profile">
+                <button class="btn btn-outline" id="app-theme-toggle" onclick="toggleTheme()" aria-label="Тема">🌙</button>
+                <div class="avatar-small" id="header-avatar" onclick="openModal('profile-modal')" role="button" tabindex="0">👤</div>
+                <span id="user-display">Student</span>
+                <button class="btn btn-outline" onclick="logout()">Выйти</button>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+            
+            <aside class="sidebar" id="sidebar" aria-label="Боковая панель">
+                <div class="sidebar-header">
+                    <h3>Мои предметы</h3>
+                    <button class="btn btn-sm" onclick="openModal('add-subject-modal')" aria-label="Добавить предмет">+</button>
+                </div>
+
+                <div class="import-section">
+                    <label>Импортировать предмет</label>
+                    <input type="text" id="import-code" placeholder="Код от одногруппника">
+                    <button class="btn" onclick="importSubject()">Импорт</button>
+                </div>
+
+                <div class="subjects-list" id="subjects-list"></div>
+
+                <div class="sidebar-footer">
+                    <div class="gamification-status">
+                        <span>🏆 Геймификация</span>
+                        <span class="badge-dev">В разработке</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="workspace">
+                <div id="empty-state" class="empty-state">
+                    <h2>Выберите предмет</h2>
+                    <p>Или импортируйте код от одногруппника.</p>
+                </div>
+
+                <div id="subject-workspace" style="display: none;">
+                    <div class="workspace-header">
+                        <div>
+                            <h2 id="current-subject-title">Название</h2>
+                            <span class="meta" id="subject-id-display">ID: ---</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn btn-outline" onclick="shareSubject()">🔗 Поделиться</button>
+                            <button class="btn btn-danger" onclick="deleteCurrentSubject()" aria-label="Удалить предмет">🗑️</button>
+                            <label class="btn">
+                                📤 Загрузить
+                                <input type="file" hidden onchange="handleFileUpload(this)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="content-area">
+                        <div class="file-list-container">
+                            <h3>Материалы</h3>
+                            <div class="files-grid" id="files-list"></div>
+                        </div>
+
+                        <div class="preview-container" id="preview-box">
+                            <div class="placeholder-text">Выберите файл</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <nav class="mobile-nav" aria-label="Навигация">
+            <a href="#" class="mobile-nav-item active">
+                <span class="icon">📚</span>
+                <span>Предметы</span>
+            </a>
+            <a href="#" class="mobile-nav-item" onclick="openModal('profile-modal')">
+                <span class="icon">👤</span>
+                <span>Профиль</span>
+            </a>
+            <a href="#" class="mobile-nav-item" onclick="logout()">
+                <span class="icon">🚪</span>
+                <span>Выйти</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- === MODALS === -->
+    <div id="add-subject-modal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <h3>Новый предмет</h3>
+            <div class="form-group">
+                <label for="new-subject-name">Название</label>
+                <input type="text" id="new-subject-name" placeholder="Например: Математика">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('add-subject-modal')">Отмена</button>
+                <button class="btn" onclick="addSubject()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <h3>Профиль</h3>
+            <div class="avatar-large" id="profile-avatar-preview">👤</div>
+            <div class="form-group" style="text-align: center; margin-top: 12px;">
+                <label class="btn btn-outline" style="width: auto; display: inline-block;">
+                    👤 Изменить аватар
+                    <input type="file" hidden accept="image/*" onchange="handleAvatarUpload(this)">
+                </label>
+                <button class="btn btn-danger" style="margin-top: 8px;" onclick="removeAvatar()">Удалить</button>
+            </div>
+            <div class="form-group">
+                <label>Никнейм</label>
+                <input type="text" id="profile-nickname" placeholder="Ваше имя">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="profile-email" disabled>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('profile-modal')">Отмена</button>
+                <button class="btn" onclick="saveProfile()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="share-modal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <h3 id="share-modal-title">Поделиться</h3>
+            <p>Отправь этот код одногруппнику:</p>
+            <div style="background: var(--bg-body); padding: 12px; border-radius: 8px; word-break: break-all; margin: 12px 0; font-family: monospace; font-size: 0.85rem;" id="share-code-display"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('share-modal')">Закрыть</button>
+                <button class="btn" onclick="copyShareCode()">📋 Копировать</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
